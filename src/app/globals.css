@@ -1,50 +1,36 @@
 @import "tailwindcss";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: #002045;
-  --color-secondary: #13696a;
-  --color-accent: #a2eded;
-  
-  --font-sans: var(--font-inter);
+/* Enable class-based dark mode for next-themes */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
 }
 
 :root {
-  --background: #f0f4f8;
-  --foreground: #1a202c;
-  --glass-bg: rgba(255, 255, 255, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --glass-bg: rgba(30, 41, 59, 0.5);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --background: #020617; /* slate-950 */
+    --foreground: #f8fafc; /* slate-50 */
   }
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
-  background-image: 
-    radial-gradient(at 0% 0%, hsla(190, 80%, 85%, 0.5) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(210, 80%, 85%, 0.5) 0px, transparent 50%);
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-@layer utilities {
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-  }
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }

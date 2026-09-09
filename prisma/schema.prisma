@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Student {
+  id               String   @id @default(cuid())
+  
+  // Identifiers
+  registerNo       String?  @unique
+  apaarId          String?  @unique
+  penNo            String?
+  saralId          String?
+  bookNo           String?
+  adharNo          String?  @unique
+
+  // Name
+  firstName        String
+  surname          String
+
+  // Admission Details
+  admissionClass   String?
+  dateOfAdmission  DateTime?
+  currentClass     String?
+  division         String?
+  educationalYear  String?
+  previousSchool   String?
+  previousClass    String?
+
+  // Demographics
+  dateOfBirth      DateTime?
+  dobInWords       String?
+  birthPlace       String?
+  gender           String?
+  bloodGroup       String?
+  nationality      String?   @default("Indian")
+  motherTongue     String?
+  religion         String?
+  caste            String?
+  subCaste         String?
+  category         String?
+  isMinority       Boolean   @default(false)
+
+  // Contact & Location
+  address          String?
+  taluka           String?
+  district         String?
+  state            String?   @default("Maharashtra")
+  country          String?   @default("India")
+  pincode          String?
+  mobileNo         String?
+
+  // Parent Details
+  fatherName       String?
+  motherName       String?
+  fatherOccupation String?
+  motherOccupation String?
+  fatherPhone      String?
+  motherPhone      String?
+
+  // Special Categories
+  isBoarder        Boolean   @default(false)
+  isScholar        Boolean   @default(false)
+  scholarshipName  String?
+  elga             String?
+  rte              Boolean   @default(false)
+
+  // Status
+  activeStatus     Boolean   @default(true)
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  // Relations
+  marks            MarksRecord[]
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "Term 1", "Half Yearly"
+  academicYear String  // e.g. "2026-2027"
+  targetClass String?  // Optional specific class for the exam
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String   @default("DRAFT") // DRAFT, ACTIVE, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  marks       MarksRecord[]
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "Mathematics"
+  code        String?  // e.g. "MATH-101"
+  type        String   @default("SCHOLASTIC") // SCHOLASTIC, CO-SCHOLASTIC
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  marks       MarksRecord[]
+}
+
+model MarksRecord {
+  id            String   @id @default(cuid())
+  studentId     String
+  examId        String
+  subjectId     String
+  
+  marksObtained Float?
+  totalMarks    Float?
+  grade         String?  // Manual grade entry
+  
+  type          String   @default("THEORY") // THEORY, PRACTICAL, INTERNAL
+  
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  subject       Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([studentId, examId, subjectId, type])
+}
