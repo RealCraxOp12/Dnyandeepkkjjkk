@@ -2,9 +2,11 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
 
-export default async function MarksheetSelectionPage({ params }: { params: Promise<{ examId: string }> }) {
+export default async function MarksheetSelectionPage({ params }: { params: Promise<{ examId: string, staffId?: string }> }) {
   const resolvedParams = await params;
   const examId = resolvedParams.examId;
+  const staffId = resolvedParams.staffId;
+  const basePath = staffId ? `/staff/${staffId}/results` : "/results";
   
   const exam = await prisma.exam.findUnique({ where: { id: examId } });
   if (!exam) return <div>Exam not found</div>;
@@ -21,7 +23,7 @@ export default async function MarksheetSelectionPage({ params }: { params: Promi
     <div className="flex-1 overflow-auto p-8 bg-transparent">
       <div className="flex items-center justify-between mb-8 max-w-5xl mx-auto">
         <Link 
-          href="/results"
+          href={basePath}
           className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" /> Back to Results
@@ -46,7 +48,7 @@ export default async function MarksheetSelectionPage({ params }: { params: Promi
                 </p>
               </div>
               <Link 
-                href={`/results/${examId}/marksheet/${student.id}`}
+                href={`${basePath}/${examId}/marksheet/${student.id}`}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-400 dark:hover:bg-purple-900/50 rounded-lg text-sm font-bold transition-colors"
               >
                 <FileText className="w-4 h-4" /> View Marksheet

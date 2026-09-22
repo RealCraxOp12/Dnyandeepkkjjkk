@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Printer, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 // Since it's a client component, we use fetch to get data from API (or we could use Server Action in useEffect).
 // To keep it robust, I'll use a Server Action import to fetch data.
@@ -12,8 +12,12 @@ import { getStudentMarksheet } from "@/app/actions/results";
 // We need a helper to fetch exam and student details. I'll just write a quick fetcher inside useEffect.
 export default function PrintableMarksheetPage() {
   const params = useParams();
+  const pathname = usePathname();
   const examId = params.examId as string;
   const studentId = params.studentId as string;
+  const basePath = pathname.startsWith("/staff/") 
+    ? `/staff/${pathname.split("/")[2]}/results`
+    : "/results";
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -50,8 +54,10 @@ export default function PrintableMarksheetPage() {
   let totalMax = 0;
 
   marks.forEach((m: any) => {
-    totalObtained += m.marksObtained || 0;
-    totalMax += m.totalMarks || 100;
+    if (m.marksObtained !== null) {
+      totalObtained += m.marksObtained;
+      totalMax += m.totalMarks || 100;
+    }
   });
 
   const percentage = totalMax > 0 ? ((totalObtained / totalMax) * 100).toFixed(2) : "0.00";
@@ -60,7 +66,7 @@ export default function PrintableMarksheetPage() {
     <div className="flex-1 overflow-auto p-8 bg-slate-200 dark:bg-slate-900 print:bg-white print:p-0 print:overflow-visible">
       <div className="flex items-center justify-between mb-8 max-w-4xl mx-auto print:hidden">
         <Link 
-          href={`/results/${examId}/marksheet`}
+          href={`${basePath}/${examId}/marksheet`}
           className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" /> Back to Students
@@ -119,7 +125,9 @@ export default function PrintableMarksheetPage() {
                 <tr key={mark.id}>
                   <td className="px-4 py-2 border-r border-slate-800 text-center">{index + 1}</td>
                   <td className="px-4 py-2 border-r border-slate-800 font-bold">{mark.subject.name}</td>
-                  <td className="px-4 py-2 border-r border-slate-800 text-center font-medium">{mark.totalMarks}</td>
+                  <td className="px-4 py-2 border-r border-slate-800 text-center font-medium">
+                    {mark.marksObtained !== null ? mark.totalMarks : "-"}
+                  </td>
                   <td className="px-4 py-2 border-r border-slate-800 text-center font-bold">
                     {mark.marksObtained !== null ? mark.marksObtained : "-"}
                   </td>

@@ -78,6 +78,8 @@ model Student {
   
   // Relations
   marks            MarksRecord[]
+  attendance       Attendance[]
+  leaveRequests    LeaveRequest[]
 }
 
 model Exam {
@@ -123,4 +125,123 @@ model MarksRecord {
   updatedAt     DateTime @updatedAt
   
   @@unique([studentId, examId, subjectId, type])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  date      DateTime @db.Date
+  status    String   // PRESENT, ABSENT, LEAVE, HALF_DAY
+  
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([studentId, date])
+}
+
+model LeaveRequest {
+  id          String   @id @default(cuid())
+  studentId   String
+  startDate   DateTime @db.Date
+  endDate     DateTime @db.Date
+  reason      String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime @db.Date
+  type        String   @default("GENERAL") // GENERAL, HOLIDAY, EXAM
+  fileUrl     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SystemSettings {
+  id                    String   @id @default("default") // Singleton pattern
+  schoolName            String   @default("Dnyandeep Vidya Mandir")
+  udiseCode             String   @default("")
+  boardAffiliation      String   @default("")
+  mediumOfInstruction   String   @default("English")
+  address               String   @default("")
+  
+  academicYear          String   @default("2024-2025")
+  gradingSystem         String   @default("CBSE 9-Point Scale")
+  
+  lcStartingSerialNo    Int      @default(1001)
+  bonafidePrefix        String   @default("DVM/BNFD/")
+  
+  schoolLogoUrl         String?
+  principalSignatureUrl String?
+  
+  updatedAt             DateTime @updatedAt
+}
+
+model Staff {
+  id          String   @id @default(cuid())
+  employeeId  String   @unique
+  password    String   // Hashed password
+  
+  firstName   String
+  surname     String
+  role        String   @default("TEACHER") // TEACHER, ACCOUNTANT, RECEPTIONIST, ADMIN
+  
+  // Optional specific assignment
+  assignedClass String? 
+  assignedSubject String?
+  
+  // Contact
+  email       String?  @unique
+  phone       String?
+  
+  activeStatus Boolean @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  targetClass String
+  subject     String
+  dueDate     DateTime @db.Date
+  fileUrl     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Syllabus {
+  id          String   @id @default(cuid())
+  title       String
+  targetClass String
+  subject     String
+  fileUrl     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  targetClass String
+  subject     String
+  fileUrl     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

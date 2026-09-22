@@ -3,11 +3,16 @@
 import { useState } from "react";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createExam } from "@/app/actions/results";
 
 export default function ExamSetupPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const basePath = pathname.startsWith("/staff/") 
+    ? `/staff/${pathname.split("/")[2]}/results`
+    : "/results";
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "Term 1 (Half Yearly)",
@@ -22,7 +27,7 @@ export default function ExamSetupPage() {
     const result = await createExam(formData);
     
     if (result.success) {
-      router.push("/results");
+      router.push(basePath);
     } else {
       alert("Failed to create exam");
       setIsSubmitting(false);
@@ -33,7 +38,7 @@ export default function ExamSetupPage() {
     <div className="flex-1 overflow-auto p-8 bg-transparent">
       <div className="flex items-center justify-between mb-8 max-w-2xl mx-auto">
         <Link 
-          href="/results"
+          href={basePath}
           className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" /> Back to Results

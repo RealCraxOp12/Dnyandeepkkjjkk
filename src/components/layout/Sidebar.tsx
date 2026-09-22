@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, UserPlus, FileText, Settings, LayoutDashboard, GraduationCap, CalendarCheck, Award, LogOut } from "lucide-react";
+import { Users, UserPlus, FileText, Settings, LayoutDashboard, GraduationCap, CalendarCheck, Award, LogOut, User } from "lucide-react";
 import clsx from "clsx";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Staff", href: "/staff-management", icon: User },
   { name: "Students", href: "/students", icon: Users },
   { name: "Admissions", href: "/admissions", icon: UserPlus },
   { name: "Attendance", href: "/attendance", icon: CalendarCheck },

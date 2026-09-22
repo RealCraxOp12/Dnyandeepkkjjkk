@@ -1,1 +1,15 @@
-export default function Page() { return <div className="p-8"><h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 capitalize">settings</h1><p className="mt-4 text-slate-600 dark:text-slate-400">This module is under development.</p></div>; }
+import { getSettings } from "../actions/settings";
+import SettingsForm from "./SettingsForm";
+
+export default async function SettingsPage() {
+  const settings = await getSettings();
+
+  return (
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-transparent">
+      {/* Main Scrollable Content */}
+      <div className="flex-1 overflow-auto p-8 pt-4">
+        <SettingsForm initialData={settings} />
+      </div>
+    </div>
+  );
+}

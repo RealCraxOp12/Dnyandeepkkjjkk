@@ -33,12 +33,18 @@ export default function MarksEntryClient({
   exam,
   subjects,
   students,
+  lockedSubject,
 }: {
   exam: Exam;
   subjects: Subject[];
   students: Student[];
+  lockedSubject?: string;
 }) {
-  const [selectedSubject, setSelectedSubject] = useState<string>(subjects[0]?.id || "");
+  const availableSubjects = lockedSubject 
+    ? subjects.filter(s => s.name.toLowerCase() === lockedSubject.toLowerCase()) 
+    : subjects;
+
+  const [selectedSubject, setSelectedSubject] = useState<string>(availableSubjects[0]?.id || "");
   const [marks, setMarks] = useState<MarksState>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -177,11 +183,19 @@ export default function MarksEntryClient({
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium w-64"
+            disabled={!!lockedSubject}
+            className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium w-64 ${
+              lockedSubject 
+                ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 cursor-not-allowed" 
+                : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white"
+            }`}
           >
-            {subjects.map(subject => (
+            {availableSubjects.map(subject => (
               <option key={subject.id} value={subject.id}>{subject.name}</option>
             ))}
+            {availableSubjects.length === 0 && lockedSubject && (
+              <option value="">{lockedSubject} (Not Found)</option>
+            )}
           </select>
         </div>
 

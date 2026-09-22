@@ -16,6 +16,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { TopNav } from "@/components/layout/TopNav";
 
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { GlobalLayoutWrapper } from "@/components/layout/GlobalLayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Dnyandeep School Management",
@@ -31,11 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-full flex h-screen bg-[#f4f7fe] dark:bg-[#0f172a] overflow-hidden print:h-auto print:overflow-visible print:bg-white transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Sidebar />
-          <div className="flex-1 flex flex-col overflow-hidden print:overflow-visible print:block relative">
-            <TopNav />
+          <GlobalLayoutWrapper>
             {children}
-          </div>
+          </GlobalLayoutWrapper>
         </ThemeProvider>
       </body>
     </html>

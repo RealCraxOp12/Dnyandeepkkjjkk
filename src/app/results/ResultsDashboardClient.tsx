@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GraduationCap, Table2, FileText, Plus, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { deleteExam } from "@/app/actions/results";
 
 type Exam = {
@@ -21,6 +21,11 @@ export default function ResultsDashboardClient({
   exams: Exam[];
   totalStudents: number;
 }) {
+  const pathname = usePathname();
+  const basePath = pathname.startsWith("/staff/") 
+    ? `/staff/${pathname.split("/")[2]}/results`
+    : "/results";
+
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -56,7 +61,7 @@ export default function ResultsDashboardClient({
           <p className="text-slate-500 dark:text-slate-400 text-sm">Manage terms, marks, and generate CBSE report cards.</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/results/setup" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-all">
+          <Link href={`${basePath}/setup`} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-bold hover:bg-blue-700 shadow-sm transition-all">
             <Plus className="w-4 h-4" /> Create Exam Term
           </Link>
         </div>
@@ -99,7 +104,7 @@ export default function ResultsDashboardClient({
             </div>
             <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">No Exams Scheduled</h3>
             <p className="text-slate-500 mt-2 max-w-sm">Create an exam term (e.g. Term 1, Half Yearly) first before you can enter student marks.</p>
-            <Link href="/results/setup" className="mt-6 px-6 py-2 bg-blue-50 text-blue-600 font-semibold rounded-md hover:bg-blue-100 transition-colors">
+            <Link href={`${basePath}/setup`} className="mt-6 px-6 py-2 bg-blue-50 text-blue-600 font-semibold rounded-md hover:bg-blue-100 transition-colors">
               Setup First Exam
             </Link>
           </div>
@@ -155,11 +160,11 @@ export default function ResultsDashboardClient({
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-6">
-                <Link href={`/results/${exam.id}/enter-marks`} className="flex flex-col items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-colors group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 text-slate-600 dark:text-slate-300">
+                <Link href={`${basePath}/${exam.id}/enter-marks`} className="flex flex-col items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-colors group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 text-slate-600 dark:text-slate-300">
                   <Table2 className="w-5 h-5" />
                   <span className="text-xs font-bold">Enter Marks</span>
                 </Link>
-                <Link href={`/results/${exam.id}/marksheet`} className="flex flex-col items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 transition-colors text-slate-600 dark:text-slate-300">
+                <Link href={`${basePath}/${exam.id}/marksheet`} className="flex flex-col items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 transition-colors text-slate-600 dark:text-slate-300">
                   <FileText className="w-5 h-5" />
                   <span className="text-xs font-bold">View Marksheets</span>
                 </Link>

@@ -258,6 +258,10 @@ export default async function Dashboard() {
                   <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-500"><User className="w-6 h-6" /></div>
                   <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Admissions</span>
                 </Link>
+                <Link href="/staff-management" prefetch={true} className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <div className="w-12 h-12 bg-teal-50 dark:bg-teal-900/30 rounded-xl flex items-center justify-center text-teal-500"><User className="w-6 h-6" /></div>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Staff</span>
+                </Link>
                 <Link href="/students" prefetch={true} className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                   <div className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-500"><BookOpen className="w-6 h-6" /></div>
                   <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Students</span>

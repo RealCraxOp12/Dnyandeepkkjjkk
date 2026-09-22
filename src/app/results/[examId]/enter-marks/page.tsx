@@ -4,9 +4,11 @@ import MarksEntryClient from "./MarksEntryClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function EnterMarksPage({ params }: { params: Promise<{ examId: string }> }) {
+export default async function EnterMarksPage({ params }: { params: Promise<{ examId: string, staffId?: string }> }) {
   const resolvedParams = await params;
   const examId = resolvedParams.examId;
+  const staffId = resolvedParams.staffId;
+  const basePath = staffId ? `/staff/${staffId}/results` : "/results";
   
   const exam = await prisma.exam.findUnique({ where: { id: examId } });
   if (!exam) return <div>Exam not found</div>;
@@ -22,11 +24,30 @@ export default async function EnterMarksPage({ params }: { params: Promise<{ exa
     orderBy: [{ currentClass: 'asc' }, { firstName: 'asc' }]
   });
 
+  let lockedSubject: string | undefined = undefined;
+  if (staffId) {
+    try {
+      const staff = await prisma.staff.findUnique({
+        where: { id: staffId },
+        select: { assignedSubject: true }
+      });
+      if (staff?.assignedSubject) {
+        lockedSubject = staff.assignedSubject;
+      }
+    } catch (error) {
+      // Fallback for db hang
+      const result = await prisma.$queryRaw`SELECT "assignedSubject" FROM "Staff" WHERE id = ${staffId}`;
+      if (Array.isArray(result) && result.length > 0 && (result[0] as any).assignedSubject) {
+        lockedSubject = (result[0] as any).assignedSubject;
+      }
+    }
+  }
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-transparent p-8">
       <div className="flex items-center justify-between mb-8 max-w-5xl mx-auto w-full shrink-0">
         <Link 
-          href="/results"
+          href={basePath}
           className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" /> Back to Results
@@ -38,7 +59,7 @@ export default async function EnterMarksPage({ params }: { params: Promise<{ exa
       </div>
 
       <div className="flex-1 max-w-5xl mx-auto w-full flex flex-col min-h-0 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-300">
-        <MarksEntryClient exam={exam} subjects={subjects} students={students} />
+        <MarksEntryClient exam={exam} subjects={subjects} students={students} lockedSubject={lockedSubject} />
       </div>
     </div>
   );
